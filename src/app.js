@@ -3,6 +3,8 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 
 const documents = {};
+const workflow = {};
+
 
 io.on('connection', socket => {
     let previousId;
@@ -11,6 +13,32 @@ io.on('connection', socket => {
         socket.join(currentId, () => console.log(`Socket ${socket.id} joined room ${currentId}`));
         previousId = currentId;
     }
+
+    socket.on('chat', message => { // message arg
+      console.log('message : ', message);
+      io.emit('chate', message); // event
+    });
+
+    socket.on('addWork', work => {
+      workflow[work.id] = work;
+      safeJoin(work.id);
+      io.emit('workflow', Object.keys(workflow));
+      socket.emit('workflow', work);
+    });
+
+    socket.on('getWork', workId => {
+      safeJoin(workId);
+      socket.emit('workflow', workflow[workId]);
+    });
+
+    socket.on('editWork', work => {
+      workflow[work.id] = work;
+      socket.to(work.id).emit('workflow', work);
+    });
+
+    io.emit('worfklow', Object.keys(workflow));
+
+    // documents
 
     socket.on('getDoc', docId => {
         safeJoin(docId);
