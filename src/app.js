@@ -10,6 +10,7 @@ io.on('connection', socket => {
     let previousId;
     const safeJoin = currentId => {
         socket.leave(previousId);
+        console.log('curentId :', currentId)
         socket.join(currentId, () => console.log(`Socket ${socket.id} joined room ${currentId}`));
         previousId = currentId;
     }
