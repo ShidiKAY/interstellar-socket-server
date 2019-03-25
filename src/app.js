@@ -4,6 +4,7 @@ const io = require('socket.io')(http);
 
 const documents = {};
 const workflow = {};
+const chats = {};
 
 
 io.on('connection', socket => {
@@ -24,7 +25,7 @@ io.on('connection', socket => {
       workflow[work.id] = work;
       safeJoin(work.id);
       io.emit('workflow', Object.keys(workflow));
-      socket.emit('workflow', work);
+      socket.emit('workflow', wor.k);
     });
 
     socket.on('getWork', workId => {
