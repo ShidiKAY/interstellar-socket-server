@@ -2,9 +2,27 @@ const app = require('express')();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 
+const cheatsheet = import('');
+
 const documents = {};
 const workflow = {};
 const chats = {};
+
+var io_testes = io
+.of('/testes')
+.on('connection', socket => {
+  socket.on('test_msg', message => {
+    socket.emit('test', 'Message : ' + message)
+  });
+});
+
+var io_messages = io
+.of('/messages')
+.on('connection', socket => {
+  socket.on('test_msg', message => {
+    socket.emit('test', 'Message : ' + message)
+  });
+});
 
 
 io.on('connection', socket => {
@@ -16,9 +34,17 @@ io.on('connection', socket => {
         previousId = currentId;
     }
 
+
     socket.on('chat', message => { // message arg
       console.log('message : ', message);
       io.emit('chate', message); // event
+    });
+
+
+    socket.on('sendMessage', message => { // message arg
+      console.log('message : ', message);
+      documents[message.idChannel].messages = message;
+      socket.to(message.idChannel).emit('document', documents[message.idChannel]);
     });
 
     socket.on('addWork', work => {
