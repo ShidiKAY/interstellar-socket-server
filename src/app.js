@@ -2,7 +2,7 @@ const app = require('express')();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 
-const cheatsheet = import('cheatsheet')(io);
+var cheatsheet = require('./services/cheatsheet.io')(io);
 
 const documents = {};
 const workflow = {};
