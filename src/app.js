@@ -2,13 +2,14 @@ const app = require('express')();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 
-var cheatsheet = require('./services/cheatsheet.io')(io);
+var cheatsheet = require('./services/cheatsheet.io')(http);
+
 
 const documents = {};
 const workflow = {};
 const chats = {};
 
-var io_testes = io
+/*var io_testes = io
 .of('/testes')
 .on('connection', socket => {
   socket.on('test_msg', message => {
@@ -22,6 +23,11 @@ var io_messages = io
   socket.on('test_msg', message => {
     socket.emit('test', 'Message : ' + message)
   });
+});*/
+
+app.get('/test', function (req, res) {
+  console.log("accès à /test")
+  res.send("Hello world test");
 });
 
 
@@ -33,6 +39,11 @@ io.on('connection', socket => {
         socket.join(currentId, () => console.log(`Socket ${socket.id} joined room ${currentId}`));
         previousId = currentId;
     }
+
+    socket.on('getDocumentsJson', message => { // message arg
+      console.log('documents : ', documents);
+      io.emit('documents', documents); // event
+    });
 
 
     socket.on('chat', message => { // message arg
@@ -73,8 +84,7 @@ io.on('connection', socket => {
         socket.emit('document', documents[docId]);
     });
 
-    socket.on('addDoc', doc => {
-        documents[doc.id] = doc;
+    socket.on('addDoc', doc => {        documents[doc.id] = doc;
         safeJoin(doc.id);
         io.emit('documents', Object.keys(documents));
         socket.emit('document', doc);
@@ -91,5 +101,5 @@ io.on('connection', socket => {
 });
 
 http.listen(4444, () => {
-    console.log('Listening on port 4444');
+    console.log('Server écoute sur 4444');
 });

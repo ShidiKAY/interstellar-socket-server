@@ -1,8 +1,12 @@
-
-module.exports = function onConnect(io){
+module.exports = function cheatsheet(http){
+  http.get('/test', function (req, res) {
+    console.log("accès à /test")
+    res.send("Hello world test");
+  });
+};
+/*module.exports = function onConnect(io){
 
   var io = io
-  .of('/cheatsheet')
   .on('connection', socket => {
 
       // sending to the client
@@ -52,4 +56,4 @@ module.exports = function onConnect(io){
 
   });
 
-};
+};*/
